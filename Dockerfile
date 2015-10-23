@@ -26,7 +26,7 @@ ADD assets/echo-nginx-module-${NGINX_ECHO_VERSION}.zip /tmp/
 ADD assets/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip /tmp/
 ADD assets/ngx_devel_kit.zip /tmp/
 
-ADD assets/LuaJIT-${LUA_VERSION}.tar.gz /tmp/
+ADD assets/luajit-${LUA_VERSION}.tar.gz /tmp/
 ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip /tmp/
 
 ADD assets/pcre2-${PCRE2_VERSION}.zip /tmp/
