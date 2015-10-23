@@ -13,7 +13,7 @@ RUN apt-get update \
 
 ENV NGINX_VERSION 1.9.5
 ENV LUA_VERSION 2.0
-END LUA_NGINX_VERSION 0.9.16
+ENV LUA_NGINX_VERSION 0.9.16
 
 ADD nginx-${NGINX_VERSION}.tar.gz  /tmp/
 ADD luajit-${LUA_VERSION}.tar.gz  /tmp/
