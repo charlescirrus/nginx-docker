@@ -5,23 +5,40 @@ MAINTAINER Erick Almeida <ephillipe@gmail.com>
 # all the apt-gets in one command & delete the cache after installing
 
 RUN apt-get update \
-    && apt-get install -y cron supervisor logrotate \
+    && apt-get install -y ca-certificates \
        build-essential make libpcre3-dev libssl-dev wget \
        iputils-arping libexpat1-dev unzip curl libncurses5-dev libreadline-dev \
        perl htop \
     && apt-get -q -y clean 
 
 ENV NGINX_VERSION 1.9.5
-ENV LUA_VERSION 2.0
+ENV LUA_VERSION 2.0.4
 ENV LUA_NGINX_VERSION 0.9.16
 ENV NGINX_STICKY_VERSION 1.2.6
+ENV OPENSSL_VERSION 1.0.2d
+ENV PCRE2_VERSION 10.00
 
-ADD assets/nginx-${NGINX_VERSION}.tar.gz  /tmp/
-ADD assets/luajit-${LUA_VERSION}.tar.gz  /tmp/
-ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip  /tmp/
-ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip  /tmp/
-ADD assets/ngx_devel_kit.zip  /tmp/
-ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip  /tmp/
+ADD assets/nginx-${NGINX_VERSION}.tar.gz /tmp/
+ADD assets/luajit-${LUA_VERSION}.tar.gz /tmp/
+ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip /tmp/
+ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip /tmp/
+ADD assets/ngx_devel_kit.zip /tmp/
+ADD assets/pcre2-${PCRE2_VERSION}.zip /tmp/
+ADD assets/openssl-${OPENSSL_VERSION}.tar.gz /tmp/
+
+ADD assets/GeoIP.tar.gz /tmp/geoip/
+ADD assets/GeoIP.dat.gz /usr/local/share/GeoIP/
+ADD assets/GeoLiteCity.dat.gz /usr/local/share/GeoIP/
+
+# Build GeoIP:
+RUN cd /tmp/geoip/ \
+    && tar -zxvf GeoIP.tar.gz \
+    && cd GeoIP-1.4.8 \
+    && ./configure \
+    && make \
+    && make install \
+    && echo '/usr/local/lib' > /etc/ld.so.conf.d/geoip.conf \
+    && ldconfig
 
 # Build LuaJit and tell nginx's build system where to find LuaJIT 2.0:
 RUN cd /tmp/luajit-${LUA_VERSION} \
