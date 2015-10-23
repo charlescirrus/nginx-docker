@@ -32,12 +32,12 @@ ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip /tmp/
 ADD assets/pcre2-${PCRE2_VERSION}.zip /tmp/
 ADD assets/openssl-${OPENSSL_VERSION}.tar.gz /tmp/
 
-ADD assets/GeoIP.tar.gz /tmp/geoip/
+ADD assets/GeoIP.tar.gz /tmp/
 ADD assets/GeoIP.dat.gz /usr/local/share/GeoIP/
 ADD assets/GeoLiteCity.dat.gz /usr/local/share/GeoIP/
 
 # Build GeoIP:
-RUN cd /tmp/geoip/ \
+RUN cd /tmp/ \
     && tar -zxvf GeoIP.tar.gz \
     && cd GeoIP-1.4.8 \
     && ./configure \
