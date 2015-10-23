@@ -14,10 +14,14 @@ RUN apt-get update \
 ENV NGINX_VERSION 1.9.5
 ENV LUA_VERSION 2.0
 ENV LUA_NGINX_VERSION 0.9.16
+ENV NGINX_STICKY_VERSION 1.2.6
 
-ADD nginx-${NGINX_VERSION}.tar.gz  /tmp/
-ADD luajit-${LUA_VERSION}.tar.gz  /tmp/
-ADD lua-nginx-module-${LUA_NGINX_VERSION}.zip  /tmp/
+ADD assets/nginx-${NGINX_VERSION}.tar.gz  /tmp/
+ADD assets/luajit-${LUA_VERSION}.tar.gz  /tmp/
+ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip  /tmp/
+ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip  /tmp/
+ADD assets/ngx_devel_kit.zip  /tmp/
+ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip  /tmp/
 
 # Build LuaJit and tell nginx's build system where to find LuaJIT 2.0:
 RUN cd /tmp/luajit-${LUA_VERSION} \
