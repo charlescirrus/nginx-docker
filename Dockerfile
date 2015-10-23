@@ -12,17 +12,23 @@ RUN apt-get update \
     && apt-get -q -y clean 
 
 ENV NGINX_VERSION 1.9.5
+ENV NGINX_STICKY_VERSION 1.2.6
+ENV NGINX_ECHO_VERSION 0.57
+ENV NGINX_MISC_VERSION 0.28
 ENV LUA_VERSION 2.0.4
 ENV LUA_NGINX_VERSION 0.9.16
-ENV NGINX_STICKY_VERSION 1.2.6
 ENV OPENSSL_VERSION 1.0.2d
 ENV PCRE2_VERSION 10.00
 
 ADD assets/nginx-${NGINX_VERSION}.tar.gz /tmp/
+ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip /tmp/
+ADD assets/echo-nginx-module-${NGINX_ECHO_VERSION}.zip /tmp/
+ADD assets/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip /tmp/
+ADD assets/ngx_devel_kit.zip /tmp/
+
 ADD assets/luajit-${LUA_VERSION}.tar.gz /tmp/
 ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip /tmp/
-ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip /tmp/
-ADD assets/ngx_devel_kit.zip /tmp/
+
 ADD assets/pcre2-${PCRE2_VERSION}.zip /tmp/
 ADD assets/openssl-${OPENSSL_VERSION}.tar.gz /tmp/
 
@@ -49,7 +55,6 @@ RUN cd /tmp/luajit-${LUA_VERSION} \
     
 RUN gcc --version \ 
  && echo "Descompactando Módulo LUA para o NGINX" \
- && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip
  && cd /tmp/nginx-${NGINX_VERSION}/ \ 
  && echo "Iniciando compilação do NGINX" \
  && ./configure --prefix=/etc/nginx \
@@ -64,13 +69,13 @@ RUN gcc --version \
                 --with-http_ssl_module \
                 --with-http_v2_module \
                 --with-http_gzip_static_module \
-                --with-openssl=/tmp/openssl-1.0.2d \
+                --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
                 --with-ld-opt='-Wl,-rpath,/opt/luajit2/lib/' \
                 --add-module=/tmp/nginx-goodies-nginx-sticky-module-ng-c78b7dd79d0d/ \
-                --add-module=/tmp/echo-nginx-module-0.57/ \
+                --add-module=/tmp/echo-nginx-module-${NGINX_ECHO_VERSION}/ \
                 --add-module=/tmp/ngx_devel_kit-master/ \
-                --add-module=/tmp/lua-nginx-module-0.9.16/ \
-                --add-module=/tmp/set-misc-nginx-module-0.28/
+                --add-module=/tmp/lua-nginx-module-${LUA_NGINX_VERSION}/ \
+                --add-module=/tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}/
  && echo "Configuração do NGINX concluída" \
  && make \
  && make install \
