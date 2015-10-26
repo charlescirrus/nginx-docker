@@ -55,11 +55,11 @@ RUN cd /tmp/LuaJIT-${LUA_VERSION} \
     
 RUN gcc --version \ 
  && echo "Descompactando Módulo LUA para o NGINX" \
- && /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
- && /tmp/echo-nginx-module-${NGINX_ECHO_VERSION}.zip \
- && /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
- && /tmp/ngx_devel_kit.zip \
- && /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
+ && unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
+ && unzip -o /tmp/echo-nginx-module-${NGINX_ECHO_VERSION}.zip \
+ && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
+ && unzip -o /tmp/ngx_devel_kit.zip \
+ && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
  && cd /tmp/nginx-${NGINX_VERSION}/ \ 
  && echo "Iniciando compilação do NGINX" \
  && ./configure --prefix=/etc/nginx \
