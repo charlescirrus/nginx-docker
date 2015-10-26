@@ -51,11 +51,14 @@ RUN cd /tmp/LuaJIT-${LUA_VERSION} \
     && export LUAJIT_LIB=/opt/luajit2/lib/ \
     && export LUAJIT_INC=/opt/luajit2/include/luajit-${LUA_VERSION}/
     
-RUN unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
+RUN cd /tmp/ \
+ && echo "Descompactando pacotes extras" \
+ && unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
  && unzip -o /tmp/echo-nginx-module-${NGINX_ECHO_VERSION}.zip \
  && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
  && unzip -o /tmp/ngx_devel_kit.zip \
  && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
+ && echo "Listando diretório temporário" \
  && ls -lh /tmp/ 
  
 RUN gcc --version \ 
