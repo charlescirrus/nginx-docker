@@ -36,6 +36,8 @@ ADD assets/GeoIP.tar.gz /tmp/
 ADD assets/GeoIP.dat.gz /usr/local/share/GeoIP/
 ADD assets/GeoLiteCity.dat.gz /usr/local/share/GeoIP/
 
+RUN ls -lh /tmp/
+
 # Build GeoIP:
 RUN cd /tmp/GeoIP-1.4.8/ \
     && ./configure \
