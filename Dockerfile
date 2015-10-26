@@ -51,14 +51,14 @@ RUN cd /tmp/LuaJIT-${LUA_VERSION} \
     && export LUAJIT_LIB=/opt/luajit2/lib/ \
     && export LUAJIT_INC=/opt/luajit2/include/luajit-${LUA_VERSION}/
     
-RUN gcc --version \ 
- && echo "Descompactando Módulo LUA para o NGINX" \
- && unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
+RUN unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
  && unzip -o /tmp/echo-nginx-module-${NGINX_ECHO_VERSION}.zip \
  && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
  && unzip -o /tmp/ngx_devel_kit.zip \
  && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
- && ls -lh /tmp/ \
+ && ls -lh /tmp/ 
+ 
+RUN gcc --version \ 
  && cd /tmp/nginx-${NGINX_VERSION}/ \ 
  && echo "Iniciando compilação do NGINX" \
  && ./configure --prefix=/etc/nginx \
@@ -75,11 +75,11 @@ RUN gcc --version \
                 --with-http_gzip_static_module \
                 --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
                 --with-ld-opt='-Wl,-rpath,/opt/luajit2/lib/' \
-                --add-module=/tmp/nginx-goodies-nginx-sticky-module-ng-c78b7dd79d0d/ \
-                --add-module=/tmp/echo-nginx-module-${NGINX_ECHO_VERSION}/ \
-                --add-module=/tmp/ngx_devel_kit-master/ \
-                --add-module=/tmp/lua-nginx-module-${LUA_NGINX_VERSION}/ \
-                --add-module=/tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}/
+                --add-module=/tmp/nginx-goodies-nginx-sticky-module-ng-c78b7dd79d0d \
+                --add-module=/tmp/echo-nginx-module-${NGINX_ECHO_VERSION} \
+                --add-module=/tmp/ngx_devel_kit-master \
+                --add-module=/tmp/lua-nginx-module-${LUA_NGINX_VERSION} \
+                --add-module=/tmp/set-misc-nginx-module-${NGINX_MISC_VERSION} \
  && echo "Configuração do NGINX concluída" \
  && make \
  && make install \
