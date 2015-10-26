@@ -36,8 +36,6 @@ ADD assets/GeoIP.tar.gz /tmp/
 ADD assets/GeoIP.dat.gz /usr/local/share/GeoIP/
 ADD assets/GeoLiteCity.dat.gz /usr/local/share/GeoIP/
 
-RUN ls -lh /tmp/
-
 # Build GeoIP:
 RUN cd /tmp/GeoIP-1.4.8/ \
     && ./configure \
@@ -60,6 +58,7 @@ RUN gcc --version \
  && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
  && unzip -o /tmp/ngx_devel_kit.zip \
  && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
+ && ls -lh /tmp/ \
  && cd /tmp/nginx-${NGINX_VERSION}/ \ 
  && echo "Iniciando compilação do NGINX" \
  && ./configure --prefix=/etc/nginx \
