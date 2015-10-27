@@ -36,22 +36,8 @@ ADD assets/GeoIP.tar.gz /tmp/
 ADD assets/GeoIP.dat.gz /usr/local/share/GeoIP/
 ADD assets/GeoLiteCity.dat.gz /usr/local/share/GeoIP/
 
-# Build GeoIP:
-RUN cd /tmp/GeoIP-1.4.8/ \
-    && ./configure \
-    && make \
-    && make install \
-    && echo '/usr/local/lib' > /etc/ld.so.conf.d/geoip.conf \
-    && ldconfig
-
-# Build LuaJit and tell nginx's build system where to find LuaJIT 2.0:
-RUN cd /tmp/LuaJIT-${LUA_VERSION} \
-    && make \
-    && make PREFIX=/opt/luajit2 install
-    
-    
-RUN cd /tmp/ \
- && echo "Descompactando pacotes extras" \
+RUN echo "Descompactando pacotes extras" \
+ && cd /tmp/ \
  && unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
  && unzip -o /tmp/echo-nginx-module-${NGINX_ECHO_VERSION}.zip \
  && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
@@ -59,12 +45,26 @@ RUN cd /tmp/ \
  && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
  && echo "Listando diretório temporário" \
  && ls -lh /tmp/ 
+
+RUN echo "Building GeoIP Library" \
+    && cd /tmp/GeoIP-1.4.8/ \
+    && ./configure \
+    && make \
+    && make install \
+    && echo '/usr/local/lib' > /etc/ld.so.conf.d/geoip.conf \
+    && ldconfig
+
+RUN echo "Building LuaJit Library" \
+    && cd /tmp/LuaJIT-${LUA_VERSION} \
+    && make \
+    && make PREFIX=/opt/luajit2 install
  
 RUN gcc --version \ 
+ && echo "Telling to nginx's build system where to find LuaJIT 2.0" \
  && export LUAJIT_LIB=/opt/luajit2/lib \
- && export LUAJIT_INC=/opt/luajit2/include/luajit-${LUA_VERSION} \
- && cd /tmp/nginx-${NGINX_VERSION} \ 
+ && export LUAJIT_INC=/opt/luajit2/include/luajit-2.0 \ 
  && echo "Iniciando compilação do NGINX" \
+ && cd /tmp/nginx-${NGINX_VERSION} \ 
  && ./configure --prefix=/etc/nginx \
                 --sbin-path=/usr/sbin/nginx \
                 --conf-path=/etc/nginx/nginx.conf \
@@ -85,14 +85,18 @@ RUN gcc --version \
                 --add-module=/tmp/lua-nginx-module-${LUA_NGINX_VERSION} \
                 --add-module=/tmp/set-misc-nginx-module-${NGINX_MISC_VERSION} \
  && echo "Configuração do NGINX concluída" \
- && make \
+ && make \ 
  && make install \
+ && echo "Instalação do NGINX concluída" \
  && rm -rf /tmp/nginx* \
  && rm -rf /tmp/lua-nginx-module*
 
 # forward request and error logs to docker log collector
-RUN ln -sf /dev/stdout /var/log/nginx/access.log
-RUN ln -sf /dev/stderr /var/log/nginx/error.log
+RUN mkdir /var/log/nginx/ \
+    && touch /var/log/nginx/access.log \
+    && touch /var/log/nginx/error.log \
+	&& ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log   	
 
 VOLUME ["/var/cache/nginx"]
 
