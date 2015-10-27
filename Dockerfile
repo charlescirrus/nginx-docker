@@ -47,9 +47,8 @@ RUN cd /tmp/GeoIP-1.4.8/ \
 # Build LuaJit and tell nginx's build system where to find LuaJIT 2.0:
 RUN cd /tmp/LuaJIT-${LUA_VERSION} \
     && make \
-    && make PREFIX=/opt/luajit2 install \
-    && export LUAJIT_LIB=/opt/luajit2/lib/ \
-    && export LUAJIT_INC=/opt/luajit2/include/luajit-${LUA_VERSION}/
+    && make PREFIX=/opt/luajit2 install
+    
     
 RUN cd /tmp/ \
  && echo "Descompactando pacotes extras" \
@@ -62,7 +61,9 @@ RUN cd /tmp/ \
  && ls -lh /tmp/ 
  
 RUN gcc --version \ 
- && cd /tmp/nginx-${NGINX_VERSION}/ \ 
+ && export LUAJIT_LIB=/opt/luajit2/lib \
+ && export LUAJIT_INC=/opt/luajit2/include/luajit-${LUA_VERSION} \
+ && cd /tmp/nginx-${NGINX_VERSION} \ 
  && echo "Iniciando compilação do NGINX" \
  && ./configure --prefix=/etc/nginx \
                 --sbin-path=/usr/sbin/nginx \
