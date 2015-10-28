@@ -11,7 +11,7 @@ RUN apt-get update \
        perl htop \
     && apt-get -q -y clean 
 
-ENV NGINX_VERSION 1.9.5
+ENV NGINX_VERSION 1.9.6
 ENV NGINX_STICKY_VERSION 1.2.6
 ENV NGINX_ECHO_VERSION 0.57
 ENV NGINX_MISC_VERSION 0.28
@@ -20,7 +20,6 @@ ENV LUA_NGINX_VERSION 0.9.16
 ENV OPENSSL_VERSION 1.0.2d
 ENV PCRE2_VERSION 10.00
 
-ADD assets/nginx-${NGINX_VERSION}.tar.gz /tmp/
 ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip /tmp/
 ADD assets/echo-nginx-module-${NGINX_ECHO_VERSION}.zip /tmp/
 ADD assets/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip /tmp/
@@ -64,6 +63,7 @@ RUN gcc --version \
  && export LUAJIT_LIB=/opt/luajit2/lib \
  && export LUAJIT_INC=/opt/luajit2/include/luajit-2.0 \ 
  && echo "Iniciando compilação do NGINX" \
+ && curl http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar -xvz -C /tmp/ \
  && cd /tmp/nginx-${NGINX_VERSION} \ 
  && ./configure --prefix=/etc/nginx \
                 --sbin-path=/usr/sbin/nginx \
