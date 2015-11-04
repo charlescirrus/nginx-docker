@@ -66,6 +66,9 @@ RUN gcc --version \
  && curl http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar -xvz -C /tmp/ \
  && cd /tmp/nginx-${NGINX_VERSION} \ 
  && ./configure --prefix=/etc/nginx \
+				--with-pcre-jit \
+				--error-log-path=/var/log/nginx/error.log \
+                --http-log-path=/var/log/nginx/access.log \
                 --sbin-path=/usr/sbin/nginx \
                 --conf-path=/etc/nginx/nginx.conf \
                 --pid-path=/var/run/nginx.pid \
@@ -92,10 +95,7 @@ RUN gcc --version \
  && rm -rf /tmp/lua-nginx-module*
 
 # forward request and error logs to docker log collector
-RUN mkdir /var/log/nginx/ \
-    && touch /var/log/nginx/access.log \
-    && touch /var/log/nginx/error.log \
-	&& ln -sf /dev/stdout /var/log/nginx/access.log \
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log   	
 
 VOLUME ["/var/cache/nginx"]
