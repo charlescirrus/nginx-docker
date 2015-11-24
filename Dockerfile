@@ -15,7 +15,7 @@ ENV TZ=America/Sao_Paulo
 RUN rm -vf /etc/localtime
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone    
 
-ENV NGINX_VERSION 1.9.6
+ENV NGINX_VERSION 1.9.7
 ENV NGINX_STICKY_VERSION 1.2.6
 ENV NGINX_ECHO_VERSION 0.57
 ENV NGINX_MISC_VERSION 0.28
