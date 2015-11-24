@@ -10,6 +10,10 @@ RUN apt-get update \
        iputils-arping libexpat1-dev unzip curl libncurses5-dev libreadline-dev \
        perl htop \
     && apt-get -q -y clean 
+    
+ENV TZ=America/Sao_Paulo
+RUN rm -vf /etc/localtime
+    && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone    
 
 ENV NGINX_VERSION 1.9.6
 ENV NGINX_STICKY_VERSION 1.2.6
