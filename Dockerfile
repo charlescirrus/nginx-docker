@@ -47,6 +47,8 @@ RUN echo "Descompactando pacotes extras" \
  && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
  && unzip -o /tmp/ngx_devel_kit.zip \
  && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
+ && gunzip -f /usr/local/share/GeoIP/GeoLiteCity.dat.gz \
+ && gunzip -f /usr/local/share/GeoIP/GeoIP.dat.gz \
  && echo "Listando diretório temporário" \
  && ls -lh /tmp/ 
 
