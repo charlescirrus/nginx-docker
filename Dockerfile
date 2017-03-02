@@ -17,21 +17,23 @@ RUN rm -vf /etc/localtime \
     && echo $TZ > /etc/timezone
 
 ENV NGINX_VERSION 1.9.7
-ENV NGINX_STICKY_VERSION 1.2.6
+ENV NGINX_STICKY_VERSION master
 ENV NGINX_ECHO_VERSION 0.57
 ENV NGINX_MISC_VERSION 0.28
 ENV LUA_VERSION 2.0.4
 ENV LUA_NGINX_VERSION 0.9.16
 ENV OPENSSL_VERSION 1.0.2d
 ENV PCRE2_VERSION 10.00
+ENV NPS_VERSION 1.12.34.2
 
-ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip /tmp/
+ADD assets/nginx-goodies-nginx-sticky-module-ng-${NGINX_STICKY_VERSION}.zip /tmp/
 ADD assets/echo-nginx-module-${NGINX_ECHO_VERSION}.zip /tmp/
 ADD assets/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip /tmp/
 ADD assets/ngx_devel_kit.zip /tmp/
 
 ADD assets/luajit-${LUA_VERSION}.tar.gz /tmp/
 ADD assets/lua-nginx-module-${LUA_NGINX_VERSION}.zip /tmp/
+ADD assets/nps-v${NPS_VERSION}-beta.zip /tmp/
 
 ADD assets/pcre2-${PCRE2_VERSION}.zip /tmp/
 ADD assets/openssl-${OPENSSL_VERSION}.tar.gz /tmp/
@@ -42,15 +44,23 @@ ADD assets/GeoLiteCity.dat.gz /usr/local/share/GeoIP/
 
 RUN echo "Descompactando pacotes extras" \
  && cd /tmp/ \
- && unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
+ && unzip -o /tmp/nginx-goodies-nginx-sticky-module-ng-${NGINX_STICKY_VERSION}.zip \
  && unzip -o /tmp/echo-nginx-module-${NGINX_ECHO_VERSION}.zip \
  && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
  && unzip -o /tmp/ngx_devel_kit.zip \
  && unzip -o /tmp/lua-nginx-module-${LUA_NGINX_VERSION}.zip \
+ && unzip -o /tmp/nps-v${NPS_VERSION}-beta.zip \
  && gunzip -f /usr/local/share/GeoIP/GeoLiteCity.dat.gz \
  && gunzip -f /usr/local/share/GeoIP/GeoIP.dat.gz \
  && echo "Listando diretório temporário" \
  && ls -lh /tmp/ 
+
+ RUN echo "NPS script Download" \
+    && cd /tmp/ngx_pagespeed-${NPS_VERSION}-beta/ \
+    && psol_url=https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz \
+    [ -e scripts/format_binary_url.sh ] && psol_url=$(scripts/format_binary_url.sh PSOL_BINARY_URL) \
+    && wget ${psol_url} \
+    && tar -xzvf $(basename ${psol_url})  # extracts to psol/
 
 RUN echo "Building GeoIP Library" \
     && cd /tmp/GeoIP-1.4.8/ \
@@ -94,6 +104,7 @@ RUN gcc --version \
                 --add-module=/tmp/ngx_devel_kit-master \
                 --add-module=/tmp/lua-nginx-module-${LUA_NGINX_VERSION} \
                 --add-module=/tmp/set-misc-nginx-module-${NGINX_MISC_VERSION} \
+                --add-module=/tmp/ngx_pagespeed-${NPS_VERSION}-beta \
  && echo "Configuração do NGINX concluída" \
  && make \ 
  && make install \
