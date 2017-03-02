@@ -99,7 +99,7 @@ RUN gcc --version \
                 --with-http_gzip_static_module \
                 --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
                 --with-ld-opt='-Wl,-rpath,/opt/luajit2/lib/' \
-                --add-module=/tmp/nginx-goodies-nginx-sticky-module-ng-c78b7dd79d0d \
+                --add-module=/tmp/nginx-goodies-nginx-sticky-module-ng-${NGINX_STICKY_VERSION} \
                 --add-module=/tmp/echo-nginx-module-${NGINX_ECHO_VERSION} \
                 --add-module=/tmp/ngx_devel_kit-master \
                 --add-module=/tmp/lua-nginx-module-${LUA_NGINX_VERSION} \
