@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian
 
 MAINTAINER Erick Almeida <ephillipe@gmail.com>
 
