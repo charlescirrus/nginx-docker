@@ -1,6 +1,6 @@
-FROM debian
+FROM debian:bookworm
 
-MAINTAINER Erick Almeida <ephillipe@gmail.com>
+LABEL key="Charles Correa <charles.dsn.cir@alterdata.com.br>"
 
 # all the apt-gets in one command & delete the cache after installing
 
