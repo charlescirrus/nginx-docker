@@ -5,7 +5,7 @@ LABEL key="Charles Correa <charles.dsn.cir@alterdata.com.br>"
 # all the apt-gets in one command & delete the cache after installing
 
 RUN apt-get update \
-    && apt-get install -y ca-certificates \
+    && apt-get install zlib1g-dev -y ca-certificates \
        build-essential make libpcre3-dev libssl-dev wget \
        iputils-arping libexpat1-dev unzip curl libncurses5-dev libreadline-dev \
        perl htop \
@@ -16,16 +16,16 @@ RUN rm -vf /etc/localtime \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime  \
     && echo $TZ > /etc/timezone
 
-ENV NGINX_VERSION 1.9.6
+ENV NGINX_VERSION 1.26.2
 ENV NGINX_STICKY_VERSION 1.2.6
-ENV NGINX_ECHO_VERSION 0.57
-ENV NGINX_MISC_VERSION 0.28
-ENV LUA_VERSION 2.0.4
-ENV LUA_NGINX_VERSION 0.9.16
-ENV OPENSSL_VERSION 1.0.2d
-ENV PCRE2_VERSION 10.00
+ENV NGINX_ECHO_VERSION 0.63
+ENV NGINX_MISC_VERSION 0.33
+ENV LUA_VERSION 2.0.5
+ENV LUA_NGINX_VERSION 0.10.28
+ENV OPENSSL_VERSION 3.5.1
+ENV PCRE2_VERSION 10.45
 
-ADD assets/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip /tmp/
+ADD assets/nginx-sticky-module-ng-${NGINX_STICKY_VERSION}.zip /tmp/
 ADD assets/echo-nginx-module-${NGINX_ECHO_VERSION}.zip /tmp/
 ADD assets/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip /tmp/
 ADD assets/ngx_devel_kit.zip /tmp/
@@ -42,7 +42,7 @@ ADD assets/GeoLiteCity.dat.gz /usr/local/share/GeoIP/
 
 RUN echo "Descompactando pacotes extras" \
  && cd /tmp/ \
- && unzip -o /tmp/nginx-sticky-module-${NGINX_STICKY_VERSION}.zip \
+ && unzip -o /tmp/nginx-sticky-module-ng-${NGINX_STICKY_VERSION}.zip \
  && unzip -o /tmp/echo-nginx-module-${NGINX_ECHO_VERSION}.zip \
  && unzip -o /tmp/set-misc-nginx-module-${NGINX_MISC_VERSION}.zip \
  && unzip -o /tmp/ngx_devel_kit.zip \
@@ -52,8 +52,13 @@ RUN echo "Descompactando pacotes extras" \
  && echo "Listando diretório temporário" \
  && ls -lh /tmp/ 
 
+ RUN cd /tmp/ \
+    && sed -i "s/ngx_http_parse_multi_header_lines.*/ngx_http_parse_multi_header_lines(r, r->headers_in.cookie, \&iphp->sticky_conf->cookie_name, \&route) != NULL){/g" /tmp/nginx-sticky-module-ng-${NGINX_STICKY_VERSION}/ngx_http_sticky_module.c \
+    && sed -i '12a #include <openssl/sha.h>' /tmp/nginx-sticky-module-ng-${NGINX_STICKY_VERSION}/ngx_http_sticky_misc.c \
+    && sed -i '12a #include <openssl/md5.h>' /tmp/nginx-sticky-module-ng-${NGINX_STICKY_VERSION}/ngx_http_sticky_misc.c
+
 RUN echo "Building GeoIP Library" \
-    && cd /tmp/GeoIP-1.4.8/ \
+    && cd /tmp/GeoIP-1.6.12/ \
     && ./configure \
     && make \
     && make install \
@@ -89,9 +94,9 @@ RUN gcc --version \
                 --with-http_gzip_static_module \
                 --with-openssl=/tmp/openssl-${OPENSSL_VERSION} \
                 --with-ld-opt='-Wl,-rpath,/opt/luajit2/lib/' \
-                --add-module=/tmp/nginx-goodies-nginx-sticky-module-ng-c78b7dd79d0d \
+                --add-module=/tmp/nginx-sticky-module-ng-${NGINX_STICKY_VERSION} \
                 --add-module=/tmp/echo-nginx-module-${NGINX_ECHO_VERSION} \
-                --add-module=/tmp/ngx_devel_kit-master \
+                --add-module=/tmp/ngx_devel_kit-0.3.3 \
                 --add-module=/tmp/lua-nginx-module-${LUA_NGINX_VERSION} \
                 --add-module=/tmp/set-misc-nginx-module-${NGINX_MISC_VERSION} \
  && echo "Configuração do NGINX concluída" \
